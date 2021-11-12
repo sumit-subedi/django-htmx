@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %} 
+ <style> 
+    .row{
+        font-family:Verdana, Geneva, Tahoma, sans-serif;
+        font-size:130%; 
+    color: rgb(138, 132, 132);
+    letter-spacing: 1mm;
+    text-align:justify; 
+    font-weight: 600;
+    }
+    .first{
+        padding-right:20px; 
+        border-right: 2px solid #ccc;
+    }
+    .tasks{
+        max-height: 50vh;
+        overflow-y: scroll;
+    }
+    .rdiv-float{
+        float: right;
+    }
+    @media only screen and (max-width: 768px) {
+        .row{
+            
+            font-size: 130%;
+            letter-spacing: normal;
+            list-style:circle;
+            margin-left: 0px;
+           
+        }
+        .rdiv-float{
+            float: none;
+        }
+         .row div{
+            /* margin:20px 0 !important; */
+            padding: 5px !important;
+            border: none ;
+        }
+        .time{
+            float: none !important;
+            text-align: center;
+            padding-bottom: 3px;
+            margin:0 !important;
+        }
+        .first{
+            border-bottom: 5px solid #ccc !important;
+            margin-bottom: 20px;
+        }
+        
+    }
+
+</style>
+{% if not request.user.is_anonymous %}
+           <div class="row col-12 mx-auto" style="text-align: center;"> You are not logged in. Showing default data </div>
+
+        {% endif %}
+
+{% include 'partials/tasklist.html' %}
+
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .container{
+        font-size: 120%;
+    }
+</style>
+
+<div class=" container">
+    <div class="" >
+    <label><u>Select a month you want to view the history for</u></label><br>
+    <input type="month" class=" mx-auto" style="border: 2px solid #333;" name="month"
+    hx-post="{% url 'history' %}" hx-trigger="change" hx-target="#historydates" hx-swap="innerHTML">
+</div>
+
+<div id="historydates" class="mx-auto">
+    
+</div>
+
+</div>
+
+
+
+{% endblock %}

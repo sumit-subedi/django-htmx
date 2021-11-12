@@ -1,0 +1,6 @@
+<div class="col col-12 mb-2 hover" style="background-color: #bbb;letter-spacing: normal;"
+hx-get="{% url 'historydetail' date.date %}" hx-trigger="click" hx-swap="outerHTML">
+          
+    <small>{{date.date}} </small>
+    <span style="float:right;"><span class="small"> {{date.c}} Entrie(s) </span> &#x25BC; </span>
+</div>

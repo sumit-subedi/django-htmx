@@ -1,0 +1,57 @@
+
+    <div class="row col-12 mt-3" id="container" >
+        
+        
+    
+        <div class="col-lg-6 col-md-12 p-4 first" style="">
+            
+            <p> <u> Tasks You Have Completed Today </u> </p>
+            
+            {% if tasks %}
+            <div class="tasks" id="tasks">
+                {% for task in tasks %}
+                <div style="padding-bottom:10px; border-bottom:2px solid #ccc;">
+                    <div style="float: right;" class="small col-12">
+                        <p style="float: right;" class="time">{{task.time}}</p> </div> 
+                    <p class="pl-3">{{task.task}}  <button  class="btn btn btn-outline-secondary my-2 my-sm-0 rdiv-float"
+                        hx-delete="{% url 'tasklist' task.id %}" 
+                        hx-target = "#container" hx-swap="outerHTML" > Delete </button></p>
+          
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <small>Sorry. No completed task registered today.<br>
+            You can add the from the next section of the screen.</small>
+
+            {% endif %}
+        </div>
+        <div class="col-lg-6 col-md-12 p-4" >
+            <p > <u>Enter The Completed Tasks</u> </p>
+            
+        <div>
+           
+            <form hx-post="{% url 'tasklist' 32 %}" hx-target="#container" hx-swap = "outerHTML" >
+                <input type="text" name="date" id="date" value="" hidden>
+                <input type="text" name="time" id="time" value="" hidden>
+        <textarea name="task" rows="4" style="width: 75%;" class="small"
+            required placeholder=" Enter the text here."></textarea>
+        <div>
+        <input type="submit" hx-trigger = "click" 
+        class="btn btn-outline-secondary my-2 my-sm-0"  >
+    </div>
+        </form>
+    </div>
+        </div>
+
+        <script>
+            var dateEle = document.getElementById('date');
+            var time = document.getElementById('time');
+            var date  = new Date();
+            dateEle.value = date.getFullYear() +"-"+ (parseInt(date.getMonth())+1) +"-"+ date.getDate();
+            time.value = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+        </script>
+
+    </div>
+ 

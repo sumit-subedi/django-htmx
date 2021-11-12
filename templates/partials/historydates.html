@@ -1,0 +1,15 @@
+<div class=" pt-4 " >
+    {% if dates %} 
+<div class=" pl-3">
+    {% for date in dates %}
+
+        {% include './datelist.html' %}
+
+    {% endfor %}
+</div>
+
+    {% else %}
+    
+      No entries found.
+{% endif %}
+</div>

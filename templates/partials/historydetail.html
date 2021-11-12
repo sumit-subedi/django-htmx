@@ -1,0 +1,17 @@
+<div class="col col-12 mb-2 hover" style="background-color: #bbb;letter-spacing: normal;"
+hx-get="{% url 'historycompress' date %}" hx-trigger = "click" hx-swap="outerHTML">
+            
+    <span class="mx-auto "> {{date}} </span>
+    <span style="float:right;"> &#x25B2; </span>
+    <hr>
+    <div>
+        {% for task in tasks %}
+                <div style="padding-bottom:10px; border-bottom:2px solid #ccc;">
+                    <div style="float: right;" class="small col-12">
+                        <span style="float: right;" class="time">{{task.time}}</span> </div> 
+                    <p class="pl-3">{{task.task}}  </p>
+          
+                </div>
+                {% endfor %}
+    </div>
+</div>
