@@ -1,15 +1,13 @@
 import datetime
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
+from django.shortcuts import redirect, render
+from django.contrib.auth import authenticate, login, logout
 from .models import (Task)
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
 
-
-
+from allauth.account.views import LoginView
 # Create your views here.
 def index(request):
-    print('hjh')
     if request.user.is_anonymous:
         user = authenticate(username = 'sumit', password = 'subedi')
         login(request, user)
@@ -20,7 +18,6 @@ def index(request):
     context = {
         'tasks' : tasks
     }
-    print(context)
     return render(request, 'home.html', context)
 
 def dailyTasks(request, pk):
@@ -57,7 +54,6 @@ def history(request):
         context = {
             'dates':dates
         }
-        print(dates)
         return render(request, 'partials/historydates.html', context)
 
     return render(request, 'history.html')
@@ -78,5 +74,12 @@ def historyCompress(request, pk):
     context = {
         'date':date[0]
         }
-    print(date[0])
     return render (request, 'partials/datelist.html', context)
+
+def CustomLoginView(request):
+    return render(request, 'login.html')
+
+
+def logoutuser(request):
+    logout(request)
+    return redirect('login')
