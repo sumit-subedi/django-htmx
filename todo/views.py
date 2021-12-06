@@ -1,9 +1,11 @@
 import datetime
 from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
-from .models import (Task)
+from .models import (Task, Remainder)
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
+from django.contrib import messages
+from django.utils import timezone
 
 from allauth.account.views import LoginView
 # Create your views here.
@@ -34,9 +36,12 @@ def dailyTasks(request, pk):
         task = request.POST['task']
         taskObj = Task(user = user, date = date, time = time, task = task)
         taskObj.save()
+        
+        messages.success(request, 'Task Added Successfully!')
     
     if request.method == 'DELETE':      
         Task.objects.get(id = pk).delete()
+        messages.warning(request, "Successfully Deleted.")
 
     tasks = Task.objects.filter(user = user, date = datetime.date.today()).order_by('-id')
 
@@ -78,6 +83,28 @@ def historyCompress(request, pk):
 
 def CustomLoginView(request):
     return render(request, 'login.html')
+
+def RemainderView(request):
+    if request.method == 'POST':
+        date = request.POST['date']
+        time = request.POST['time']
+        mail = request.POST['email']
+        re_date = request.POST['re_date']
+        re_time = request.POST['re_time']
+        text = request.POST['text']
+        
+        dateobj = timezone.make_aware(datetime.datetime.strptime(date+time, '%Y-%m-%d%H:%M:%S'))
+        
+        diff = dateobj - timezone.now()
+        
+        re_dateobj = timezone.make_aware(datetime.datetime.strptime(re_date+re_time, '%Y-%m-%d%H:%M'))
+
+        obj = Remainder(user = request.user, added = dateobj, time = re_dateobj+diff, text = text)
+        obj.save()
+
+        
+    remainders = Remainder.objects.filter(user = request.user, sent = False)
+    return render(request, 'remainder.html', {'remainders':remainders})
 
 
 def logoutuser(request):

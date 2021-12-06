@@ -9,115 +9,8 @@
         integrity="sha384-oGA+prIp5Vchu6we2YkI51UtVzN9Jpx2Z7PnR1I78PnZlN8LkrCT4lqqqmDkyrvI"
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-<style>
-  body{font-family:Verdana, Geneva, Tahoma, sans-serif;
-        /* font-size:130%;  */
-    color: rgb(138, 132, 132);
-    letter-spacing: 1mm;
-    text-align:justify; 
-    font-weight: 600;}
-nav {
+{% include 'partials/style.html' %}
   
-  background: #e7e7e7;
-  padding: 20px 10% !important;
-  
-  /* box-shadow: 0px 5px 0px #dedede; */
-}
-nav ul {
-  list-style: none;
-  text-align: center;
-}
-nav ul li {
-  display: inline-block;
-}
-nav ul li a, .user {
-  display: block;
-  padding: 15px;
-  text-decoration: none;
-  color: rgb(138, 132, 132);
-  font-weight: 800;
-  text-transform: uppercase;
-  margin: 0 10px;
-}
-nav ul li a,
-nav ul li a:after,
-nav ul li a:before {
-  transition: all .5s;
-}
-nav ul li a:hover{
-  color: #555;
-}
-.user{
-  padding-top: 20px;
-}
-
-.user:hover{
-  background-color: #666;
-  color: #333;
-}
-
-  
-nav.fill ul li a {
-  position: relative;
-}
-
-nav.fill ul li a:after {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-  width: 0%;
-  content: '.';
-  color: transparent;
-  background: #aaa;
-  height: 1px;
-}
-    nav.fill ul li a {
-  transition: all 1s;
-}
-
-nav.fill ul li a:after {
-  text-align: left;
-  content: '.';
-  margin: 0;
-  opacity: 0;
-}
-nav.fill ul li a:hover {
-    text-decoration: none;
-  color: #fff;
-  z-index: 1;
-}
-nav.fill ul li a:hover:after {
-  z-index: -10;
-  animation: fill 0.7s forwards;
-  -webkit-animation: fill 0.7s forwards;
-  -moz-animation: fill 1s forwards;
-  opacity: 1;
-}
-
-@keyframes fill {
-  0% {
-    width: 0%;
-    height: 1px;
-  }
-  70% {
-    width: 100%;
-    height: 1px;
-  }
-  100% {
-    width: 100%;
-    height: 100%;
-    background: #333;
-    
-  }
-}
-.hover:hover{
-  background-color: #eee;
-  color:#333;
-  opacity: 0.7;
-}
-</style>
 <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script> -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -128,7 +21,9 @@ nav.fill ul li a:hover:after {
 </head>
 <body>
     <nav class="navbar navbar-expand-sm navbar-light fill">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="" href="" hx-get="/" hx-target="body">
+          <img src="https://res.cloudinary.com/dhspzhgjf/image/upload/t_media_lib_thumb/v1638806079/Major_Mon__2_-removebg-preview_hjjmpj.png" width="100" height="100">
+        </a>
         <button  class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -136,17 +31,17 @@ nav.fill ul li a:hover:after {
         <div class="collapse navbar-collapse"  id="navbarSupportedContent">
           <ul class="navbar-nav mx-auto ">
             <li class="nav-item ">
-              <a  href="">Home </a>
+              <a href="" hx-get="/" hx-target="body">Home </a>
             </li>
 
             <li class="nav-item">
-              <a href="">Add Shortcut</a>
+              <a href="" hx-get="{% url 'remainder' %}" hx-target="#container1">Set Remainder</a>
             </li>
 
             
             
             <li class="nav-item">
-              <a  href="#" >History</a>
+              <a href="" hx-get="{% url 'history' %}" hx-target="#container1" >History</a>
             </li>
             
           </ul>
@@ -164,10 +59,19 @@ nav.fill ul li a:hover:after {
         </div>
         
       </nav>
+      {% if request.user.username == "sumit" %}
+           <h5 class="mt-2"  style="text-align: center; font-weight: bold;color: red;"> 
+            <u>You are not logged in. Showing default data </u>
+          </h5>
+
+        {% endif %}
+        
+
       <div id="container1" style="max-width: 100%;">
     {% block content %}
     {% endblock %}
   </div>
+
     <script>
         document.body.addEventListener('htmx:configRequest', (event) => {
             event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';

@@ -14,4 +14,5 @@ urlpatterns = [
     path('htmx/tasklist/<pk>/', dailyTasks, name='tasklist'),
     path('htmx/historydetail/<pk>', historySearch, name='historydetail'),
     path('htmx/historycompress/<pk>', historyCompress, name='historycompress'),
+    path('htmx/remainder', RemainderView, name='remainder'),
 ]
