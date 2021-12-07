@@ -6,6 +6,7 @@ from django.db.models.functions import TruncMonth
 from django.db.models import Count
 from django.contrib import messages
 from django.utils import timezone
+from django.http import QueryDict
 
 from allauth.account.views import LoginView
 # Create your views here.
@@ -85,6 +86,7 @@ def CustomLoginView(request):
     return render(request, 'login.html')
 
 def RemainderView(request):
+    
     if request.method == 'POST':
         date = request.POST['date']
         time = request.POST['time']
@@ -99,8 +101,13 @@ def RemainderView(request):
         
         re_dateobj = timezone.make_aware(datetime.datetime.strptime(re_date+re_time, '%Y-%m-%d%H:%M'))
 
-        obj = Remainder(user = request.user, added = dateobj, time = re_dateobj+diff, text = text)
+        obj = Remainder(user = request.user, added = dateobj, time = re_dateobj+diff, text = text, mail = mail)
         obj.save()
+    
+    if request.method == 'DELETE':
+        # print(str(request.body), request.body)
+        id = QueryDict(request.body).get('id')
+        Remainder.objects.get(id = id).delete()
 
         
     remainders = Remainder.objects.filter(user = request.user, sent = False)

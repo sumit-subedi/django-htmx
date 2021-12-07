@@ -28,7 +28,7 @@
                 <div style="padding-bottom:10px; border-bottom:2px solid #ccc;">
                     <div style="float: right;" class="small col-12">
                         <p style="float: right;" class="time">{{task.time}}</p> </div> 
-                    <p class="pl-3">{{task.task}}  <button  class="btn btn btn-outline-secondary my-2 my-sm-0 rdiv-float"
+                    <p class="pl-3">{{task.task}}  <button style="float: right;"  class="btn btn-outline-secondary mr-3"
                         hx-delete="{% url 'tasklist' task.id %}" 
                         hx-target = "#container" hx-swap="outerHTML" > Delete </button></p>
           
