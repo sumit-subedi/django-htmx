@@ -16,3 +16,5 @@ def scheduled_task():
         mail.sent = True
         mail.save()
     return True
+
+scheduled_task()
