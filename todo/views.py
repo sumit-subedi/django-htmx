@@ -97,7 +97,7 @@ def RemainderView(request):
         
         dateobj = timezone.make_aware(datetime.datetime.strptime(date+time, '%Y-%m-%d%H:%M:%S'))
         
-        diff = dateobj - timezone.now()
+        diff = timezone.now() - dateobj
         
         re_dateobj = timezone.make_aware(datetime.datetime.strptime(re_date+re_time, '%Y-%m-%d%H:%M'))
 
