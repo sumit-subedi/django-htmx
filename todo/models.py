@@ -15,6 +15,7 @@ class Remainder(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     added = models.DateTimeField(auto_now_add=False)
     time = models.DateTimeField(auto_now_add=False)
+    set_time = models.DateTimeField(auto_now_add=False, null=True)
     text = models.TextField()
     mail = models.CharField(max_length=50, blank=True)
     sent = models.BooleanField(default=False)
