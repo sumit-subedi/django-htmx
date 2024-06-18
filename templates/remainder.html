@@ -1,92 +1,88 @@
-
-
 {% if messages %}
-<ul class="messages">
+<script>
     {% for message in messages %}
-    <script>Swal.fire({
+    Swal.fire({
         position: 'top-end',
-        icon: '{{message.tags}}',
-        title: '{{message.message}}',
+        icon: '{{ message.tags }}',
+        title: '{{ message.message }}',
         width: 500,
         height: 100,
         showConfirmButton: false,
         timer: 1500,
         imageSize: '50x50'
-      })</script>
+    });
     {% endfor %}
-</ul>
+</script>
 {% endif %}
 
-    <div class="row col-12 mt-3" id="container" >
+<div class="row col-12 mt-3" id="container">
 
-        <div class="col-lg-6 col-md-12 p-4 first" >
-            
-            <p> <u> Your Unsent Remainders </u> </p>
-            
-            {% if remainders %}
-            <div class="tasks" id="tasks">
-                {% for remainder in remainders %}
-                <div style="padding-bottom:10px; border-bottom:2px solid #ccc;">
-                    
-                    <p class="pl-3">{{remainder.text}} 
-                        <span style="float: right;" class="time">{{remainder.added.time}}</span>
-                        <form class="rdiv-float display-none" style="float: right;" hx-delete="{% url 'remainder' %}" 
-                        hx-target = "#container" hx-swap="outerHTML">
-                            <input type="text" value="{{remainder.id}}" name="id" hidden>
-                        <button type="submit"  class="btn btn-outline-secondary mr-3 my-sm-0 rdiv-float" value="{{remainder.id}}"
-                     > Cancel </button>
-                </form>  </p>
-                     
-                        <p class="pl-3" style="text-align: start;"> Mail To : {{remainder.mail}} 
-                           
-                        </p>
-                        <p class="pl-3"> Scheduled for : {{remainder.set_time.date}} {{remainder.set_time.time}}
-                        </p>
-          
-                </div>
-                {% endfor %}
+    <div class="col-lg-6 col-md-12 p-4 first">
+
+        <p><u>Your Unsent Remainders</u></p>
+
+        {% if remainders %}
+        <div class="tasks" id="tasks">
+            {% for remainder in remainders %}
+            <div style="padding-bottom:10px; border-bottom:2px solid #ccc;">
+
+                <p class="pl-3">{{ remainder.text }}
+                    <span style="float: right;" class="time">{{ remainder.added.time }}</span>
+                    <form class="rdiv-float display-none" style="float: right;"
+                        hx-delete="{% url 'remainder' %}" hx-target="#container" hx-swap="outerHTML">
+                        <input type="text" value="{{ remainder.id }}" name="id" hidden>
+                        <button type="submit" class="btn btn-outline-secondary mr-3 my-sm-0 rdiv-float" value="{{ remainder.id }}">
+                            Cancel
+                        </button>
+                    </form>
+                </p>
+
+                <p class="pl-3" style="text-align: start;">Mail To: {{ remainder.mail }}</p>
+                <p class="pl-3">Scheduled for: {{ remainder.set_time.date }} {{ remainder.set_time.time }}</p>
+
             </div>
-            {% else %}
-            <small>Sorry. No Unsent Remainders.<br>
+            {% endfor %}
+        </div>
+        {% else %}
+        <small>Sorry. No Unsent Remainders.<br>
             You can add some from the next section of the screen.</small>
 
-            {% endif %}
-        </div>
-        <div class="col-lg-6 col-md-12 p-4" >
-            <p > <u>Set A Remainder</u> </p>
-            
+        {% endif %}
+    </div>
+
+    <div class="col-lg-6 col-md-12 p-4">
+        <p><u>Set A Reminder</u></p>
+
         <div>
-           
-            <form hx-post="{% url 'remainder' %}" hx-target="#container" hx-swap = "outerHTML" >
-                <input type="text" name="date" id="date" value="" hidden>
-                <input type="text" name="time" id="time" value="" hidden>
-        <textarea name="text" rows="4" style="width: 75%;" class="small"
-            required placeholder=" Enter the text here."></textarea>
-            <div>
-                <h6>When do you want to be reminded?</h6>
-            <input type="date" name="re_date" required>
-            <input type="time" name="re_time" value="09:00">
+            <form method="post" action="{% url 'remainder' %}" hx-post="{% url 'remainder' %}" hx-target="#container" hx-swap="outerHTML">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="mt-3">
+                    <input type="submit" class="btn btn-outline-secondary my-2 my-sm-0" value="Set Reminder">
+                </div>
+            </form>
         </div>
-        <div class="mt-3">
-            <h6>Remind Me on This Mail</h6>
-            <input type="email" name="email" placeholder="Enter a Mail" required value="{{request.user.email}}">
-        </div>
-        <div class="mt-3">
-        <input type="submit" hx-trigger = "click" 
-        class="btn btn-outline-secondary my-2 my-sm-0"  >
     </div>
-        </form>
-    </div>
-        </div>
 
-        <script>
-            var dateEle = document.getElementById('date');
-            var time = document.getElementById('time');
-            var date  = new Date();
-            dateEle.value = date.getFullYear() +"-"+ (parseInt(date.getMonth())+1) +"-"+ date.getDate();
-            time.value = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+</div>
 
-        </script>
+<script>
+    
+    var addedField = document.querySelector('input[name="added"]');
+    if (addedField) {
+        var date = new Date();
+        var year = date.getFullYear();
+        var month = (date.getMonth() + 1).toString().padStart(2, '0');
+        var day = date.getDate().toString().padStart(2, '0');
+        var hours = date.getHours().toString().padStart(2, '0');
+        var minutes = date.getMinutes().toString().padStart(2, '0');
+        var seconds = date.getSeconds().toString().padStart(2, '0');
+        
+        var formattedDate = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+        console.log(addedField);
+        addedField.value = formattedDate;
 
-    </div>
- 
+    }
+
+
+</script>

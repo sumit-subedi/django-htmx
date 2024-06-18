@@ -1,5 +1,74 @@
-<h1>Welcome to my app</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to my app</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% include 'partials/style.html' %} <!-- Include your custom styles -->
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="" hx-get="/" hx-target="body">
+            <img src="https://res.cloudinary.com/dhspzhgjf/image/upload/t_media_lib_thumb/v1638806079/Major_Mon__2_-removebg-preview_hjjmpj.png" width="50" height="50" alt="Logo">
+            Major Mon
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="" hx-get="/" hx-target="body">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'history' %}" hx-get="{% url 'history' %}" hx-target="#container1">Task History</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'remainder' %}" hx-get="{% url 'remainder' %}" hx-target="#container1">Set Reminder</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="" hx-get="{% url 'history' %}" hx-target="#container1" >Remainder History</a>            </li>
+            </ul>
+            
+            <ul class="navbar-nav">
+              
+                <!-- <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li> -->
+            </ul>
+        </div>
+    </nav>
 
-<h3>Login Here</h3>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Welcome to my app</h2>
+                        <h4 class="card-subtitle text-center mb-4">Login Here</h4>
+                        <div class="text-center">
+                            <a href="/accounts/google/login?process=login" class="btn btn-primary btn-lg">Login with Google</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<a href="/accounts/google/login?process=login">Google</a>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/htmx.org@1.5.0" integrity="sha384-oGA+prIp5Vchu6we2YkI51UtVzN9Jpx2Z7PnR1I78PnZlN8LkrCT4lqqqmDkyrvI" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.8.2"></script>
+
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        });
+    </script>
+</body>
+</html>

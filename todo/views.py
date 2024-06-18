@@ -1,119 +1,135 @@
 import datetime
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from .models import (Task, Remainder)
+from .models import Task, Remainder
 from django.db.models.functions import TruncMonth
 from django.db.models import Count
 from django.contrib import messages
 from django.utils import timezone
-from django.http import QueryDict
+from django.utils.decorators import method_decorator
 
-from allauth.account.views import LoginView
-# Create your views here.
-def index(request):
-    if request.user.is_anonymous:
-        user = authenticate(username = 'sumit', password = 'subedi')
-        login(request, user)
-    else:
-        user = request.user
-    tasks = Task.objects.filter(user = user, date = datetime.date.today()).order_by('-id')
+from django.http import QueryDict, JsonResponse
+from django.views.decorators.http import require_POST, require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.views import View
+from .forms import TaskForm, RemainderForm
 
-    context = {
-        'tasks' : tasks
-    }
-    return render(request, 'home.html', context)
+class IndexView(View):
+    def get(self, request):
+        if request.user.is_anonymous:
+            user = authenticate(username = 'sumit', password = 'subedi')
+            login(request, user)
 
-def dailyTasks(request, pk):
-    
-    if request.user.is_anonymous:
-        user = authenticate(username = 'sumit', password = 'subedi')
-    else:
-        user = request.user
-    
-    if request.method == 'POST':
-       
-        date = request.POST['date']
-        time = request.POST['time']
-        task = request.POST['task']
-        taskObj = Task(user = user, date = date, time = time, task = task)
-        taskObj.save()
+        tasks = Task.objects.filter(user=request.user, date=datetime.date.today()).order_by('-id')
+        context = {'tasks': tasks}
+        return render(request, 'home.html', context)
+
+class DailyTasksView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        tasks = Task.objects.filter(user=request.user, date=datetime.date.today()).order_by('-id')
+        return render(request, 'partials/tasklist.html', {'tasks': tasks})
+
+    @method_decorator(login_required)
+    @method_decorator(require_POST)
+    def post(self, request, pk=None):
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.user = request.user
+            task.save()
+            messages.success(request, 'Task Added Successfully!')
+        else:
+            messages.error(request, 'Failed to add task.')
+        return redirect('daily_tasks', pk=pk)
+
+    @method_decorator(login_required)
+    @method_decorator(require_http_methods(['DELETE']))
+    def delete(self, request, pk):
+        task = get_object_or_404(Task, id=pk, user=request.user)
+        task.delete()
+        messages.warning(request, 'Successfully Deleted.')
+        return JsonResponse({'status': 'ok'})
+
+class HistoryView(View):
+    @method_decorator(login_required)
+    def get(self, request):
+        return render(request, 'history.html')
+
+    @method_decorator(login_required)
+    @method_decorator(require_POST)
+    def post(self, request):
+        date = request.POST.get('month')
+        if not date:
+            messages.error(request, 'Invalid date format.')
+            return redirect('history')
         
-        messages.success(request, 'Task Added Successfully!')
-    
-    if request.method == 'DELETE':      
-        Task.objects.get(id = pk).delete()
-        messages.warning(request, "Successfully Deleted.")
-
-    tasks = Task.objects.filter(user = user, date = datetime.date.today()).order_by('-id')
-
-    return render(request, 'partials/tasklist.html', {'tasks':tasks})
-
-def history(request):
-    if request.method == 'POST':
-        date = request.POST['month']
-        
-        fromdate = date+'-1'
+        from_date = f'{date}-01'
         year, month = date.split('-')
-        todate = year + "-" + str(int(month)+1) +"-1" 
+        to_date = f"{int(year) + 1}-01-01" if month == '12' else f"{year}-{int(month) + 1:02d}-01"
+
+        dates = Task.objects.filter(user=request.user, date__gte=from_date, date__lt=to_date).annotate(
+            month=TruncMonth('date')
+        ).values('date').annotate(c=Count('id'))
         
-        dates = Task.objects.filter(user = request.user, date__gt = fromdate, date__lt = todate).annotate(month=TruncMonth('date')).values('date').annotate(c=Count('id'))
-        context = {
-            'dates':dates
-        }
+        context = {'dates': dates}
         return render(request, 'partials/historydates.html', context)
 
-    return render(request, 'history.html')
+class HistorySearchView(View):
+    @method_decorator(login_required)
+    def get(self, request, pk):
+        tasks = Task.objects.filter(user=request.user, date=pk)
+        context = {'date': pk, 'tasks': tasks}
+        return render(request, 'partials/historydetail.html', context)
 
-def historySearch(request, pk):
+@method_decorator(login_required, name='dispatch')
+class RemainderView(View):
     
-    tasks = Task.objects.filter(user = request.user, date = pk)
+    def get(self, request):
+        remainders = Remainder.objects.filter(user=request.user, sent=False)
+        form = RemainderForm(initial={'mail': request.user.email})
+        return render(request, 'remainder.html', {'remainders': remainders, 'form': form})
 
-    context = {
-        'date': pk,
-        'tasks' : tasks
-    }
+    def post(self, request):
+        form = RemainderForm(request.POST)
+        print(form.data)
+        if form.is_valid():
+            remainder = form.save(commit=False)
+            remainder.user = request.user
+            remainder.save()
+            messages.success(request, 'Reminder Added Successfully!')
+        else:
+            print(form.errors)
+            messages.error(request, 'Failed to add reminder.')
+        return redirect('remainder')
 
-    return render (request, 'partials/historydetail.html', context)
+    def delete(self, request):
+        body = QueryDict(request.body)
+        id = body.get('id')
+        remainder = get_object_or_404(Remainder, id=id, user=request.user)
+        remainder.delete()
+        messages.success(request, "Task successfully deleted.")
+        
+        remainders = Remainder.objects.filter(user = request.user, sent = False)
+        form = RemainderForm(initial={'mail': request.user.email})
+        return render(request, 'remainder.html', {'remainders': remainders, 'form': form})
 
 def historyCompress(request, pk):
-    date = Task.objects.filter(user = request.user,date = pk).annotate(month=TruncMonth('date')).values('date').annotate(c=Count('id'))
+    dates = Task.objects.filter(user=request.user, date=pk).values('date').annotate(c=Count('id'))
+
+    if dates:
+        date = dates[0]
+    else:
+        date = None
+
     context = {
-        'date':date[0]
-        }
-    return render (request, 'partials/datelist.html', context)
-
-def CustomLoginView(request):
-    return render(request, 'login.html')
-
-def RemainderView(request):
-    
-    if request.method == 'POST':
-        date = request.POST['date']
-        time = request.POST['time']
-        mail = request.POST['email']
-        re_date = request.POST['re_date']
-        re_time = request.POST['re_time']
-        text = request.POST['text']
-        
-        dateobj = timezone.make_aware(datetime.datetime.strptime(date+time, '%Y-%m-%d%H:%M:%S'))
-        
-        diff = timezone.now() - dateobj
-        
-        re_dateobj = timezone.make_aware(datetime.datetime.strptime(re_date+re_time, '%Y-%m-%d%H:%M'))
-
-        obj = Remainder(user = request.user, added = dateobj, set_time = re_dateobj, time = re_dateobj+diff, text = text, mail = mail)
-        obj.save()
-    
-    if request.method == 'DELETE':
-        # print(str(request.body), request.body)
-        id = QueryDict(request.body).get('id')
-        Remainder.objects.get(id = id).delete()
-
-        
-    remainders = Remainder.objects.filter(user = request.user, sent = False)
-    return render(request, 'remainder.html', {'remainders':remainders})
-
+        'date': date
+    }
+    return render(request, 'partials/datelist.html', context)
 
 def logoutuser(request):
     logout(request)
     return redirect('login')
+
+def CustomLoginView(request):
+    return render(request, 'login.html')

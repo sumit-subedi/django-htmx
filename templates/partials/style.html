@@ -1,100 +1,113 @@
 <style> 
-    .row{
-        font-family:Verdana, Geneva, Tahoma, sans-serif;
-        font-size:130%; 
-    color: rgb(138, 132, 132);
-    letter-spacing: 1mm;
-    text-align:justify; 
-    font-weight: 600;
-    }
-    .first{
-        padding-right:20px; 
-        border-right: 2px solid #ccc;
-    }
-    .tasks{
-        max-height: 50vh;
-        overflow-y: scroll;
-    }
-    .rdiv-float{
-        float: right;
-    }
-    @media only screen and (max-width: 768px) {
-        .row{
-            
-            font-size: 130%;
-            letter-spacing: normal;
-            list-style:circle;
-            margin-left: 0px;
-           
-        }
-        .rdiv-float{
-            float: none;
-        }
-         .row div{
-            /* margin:20px 0 !important; */
-            padding: 5px !important;
-            border: none ;
-        }
-        .time{
-            float: none !important;
-            text-align: center;
-            padding-bottom: 3px;
-            margin:0 !important;
-        }
-        .first{
-            border-bottom: 5px solid #ccc !important;
-            margin-bottom: 20px;
-        }
-        
-    }
-
-    body{font-family:Verdana, Geneva, Tahoma, sans-serif;
-        /* font-size:130%;  */
-    color: rgb(138, 132, 132);
-    letter-spacing: 1mm;
-    text-align:justify; 
-    font-weight: 600;}
-nav {
-  
-  background: #e7e7e7;
-  padding: 20px 10% !important;
-  
-  /* box-shadow: 0px 5px 0px #dedede; */
+    /* General styles */
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 16px; /* Adjust base font size */
+  color: rgb(138, 132, 132);
+  letter-spacing: 1mm;
+  text-align: justify;
+  font-weight: 600;
 }
+
+/* Container for rows */
+.row {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-size: 1.3em; /* Use em for font sizing */
+  color: rgb(138, 132, 132);
+  letter-spacing: 1mm;
+  text-align: justify;
+  font-weight: 600;
+}
+
+/* Styling for the first column in a row */
+.first {
+  padding-right: 20px;
+  border-right: 2px solid #ccc;
+}
+
+/* Scrollable tasks container */
+.tasks {
+  max-height: 50vh;
+  overflow-y: auto; /* Use auto for scrollable overflow */
+}
+
+/* Right-floated element */
+.rdiv-float {
+  float: right;
+}
+
+/* Responsive styles for smaller screens */
+@media only screen and (max-width: 768px) {
+  .row {
+    font-size: 1.1em; /* Adjust font size for smaller screens */
+    letter-spacing: normal;
+    list-style: circle;
+    margin-left: 0;
+  }
+  
+  .rdiv-float {
+    float: none;
+  }
+  
+  .row div {
+    padding: 5px;
+    border: none;
+  }
+  
+  .time {
+    float: none;
+    text-align: center;
+    padding-bottom: 3px;
+    margin: 0;
+  }
+  
+  .first {
+    border-bottom: 5px solid #ccc;
+    margin-bottom: 20px;
+  }
+}
+
+/* Navigation styles */
+nav {
+  background: #e7e7e7;
+  padding: 20px 10%; /* Adjust padding for better spacing */
+}
+
 nav ul {
   list-style: none;
   text-align: center;
 }
+
 nav ul li {
   display: inline-block;
 }
-nav ul li a, .user {
+
+nav ul li a,
+.user {
   display: block;
-  padding: 15px;
+  
   text-decoration: none;
   color: rgb(138, 132, 132);
   font-weight: 800;
   text-transform: uppercase;
   margin: 0 10px;
 }
+
 nav ul li a,
 nav ul li a:after,
 nav ul li a:before {
-  transition: all .5s;
-}
-nav ul li a:hover{
-  color: #555;
-}
-.user{
-  padding-top: 20px;
+  transition: all 0.5s;
 }
 
-.user:hover{
+nav ul li a:hover {
+  color: #555;
+}
+
+.user:hover {
   background-color: #666;
   color: #333;
 }
 
-  
 nav.fill ul li a {
   position: relative;
 }
@@ -111,50 +124,25 @@ nav.fill ul li a:after {
   background: #aaa;
   height: 1px;
 }
-    nav.fill ul li a {
-  transition: all 1s;
-}
 
-nav.fill ul li a:after {
-  text-align: left;
-  content: '.';
-  margin: 0;
-  opacity: 0;
-}
 nav.fill ul li a:hover {
-    text-decoration: none;
+  text-decoration: none;
   color: #fff;
   z-index: 1;
 }
+
 nav.fill ul li a:hover:after {
   z-index: -10;
   animation: fill 0.7s forwards;
-  -webkit-animation: fill 0.7s forwards;
-  -moz-animation: fill 1s forwards;
-  opacity: 1;
 }
 
-@keyframes fill {
-  0% {
-    width: 0%;
-    height: 1px;
-  }
-  70% {
-    width: 100%;
-    height: 1px;
-  }
-  100% {
-    width: 100%;
-    height: 100%;
-    background: #333;
-    
-  }
-}
-.hover:hover{
+/* Hover effect */
+.hover:hover {
   background-color: #eee;
-  color:#333;
+  color: #333;
   opacity: 0.7;
 }
-</style>
+
 
 </style>
+
